@@ -13,10 +13,6 @@ DESTLIBEXEC=$(PREFIX)/libexec/$(NAME)
 
 defualt: exec
 
-# TODO: Remove this:
-hole:
-	$(MAKE) PREFIX=$(HOME)/hole/sheller install
-
 
 exec::
 	chmod +x bin/*
@@ -32,6 +28,7 @@ install: exec clean
 	chmod -R go-ws $(DESTLIBEXEC)/*
 	chmod 755 $(DESTLIBEXEC)
 	sed -i -e 's|__PREFIX__|$(PREFIX)|g' $(DESTLIBEXEC)/init
+
 
 uninstall::
 	rm -f $(DESTBIN)/$(NAME)
@@ -57,7 +54,6 @@ TO_CLEAN += $(TARBALLDIR) $(TARBALL)
 tar: $(TARBALL)
 
 
-# TODO: MAF has a nicer version of this somewhere.
 todo:
 	@egrep -r -e 'T[O]DO:' . \
 	| fgrep -v "Binary file" \
