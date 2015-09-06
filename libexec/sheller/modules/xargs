@@ -1,15 +1,25 @@
 #
-# Emulate versions of xargs that support the -r flag
+# Non-standard xargs emulation
 #
 
 include tmp
 
-# Emulate xargs -r (do nothing if no input lines), which isn't POSIX
+#
+# Emulate the GNU xargs --no-run-if-empty (-r) switch
+#
+# POSIX mandates that xargs invoke the utility at least once, even if
+# there is the standard input is empty.  GNU xargs adds a -r switch
+# that does not invoke the utility in that case.
+#
+# (See http://pubs.opengroup.org/onlinepubs/009604599/utilities/xargs.html)
 #
 # Args:
 #  1+ - Any valid arguments for xargs(1)
 xargs_r()
 {
+    # TODO: On systems that can handle this as desired (Darwin by
+    # default, Linux with -r), run xargs directly.
+
     # TODO: This would work better with arbitrarily-large input if we
     # tried to read the first line and then passed that plus a cat of
     # stdin to xargs.

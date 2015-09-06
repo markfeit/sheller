@@ -8,3 +8,9 @@ using the null command:
       This is a bunch of documentation.
       =cut
 
+
+Have the installation process strip comments and documentation out of
+the modules to cut back on load time.
+
+Explore POSIXness of local variables and use those instead of __XXX.
+
