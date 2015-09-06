@@ -1,0 +1,59 @@
+#
+# Text Formatting Functions
+#
+
+include interactive
+
+# Format a list in four columns if interactive, otherwise just print it
+#
+# Args:
+#  1  - Title (ignored if empty or not interactive)
+#  2+ - List of input files (optional, default is stdin)
+format_list()
+{
+    if [ $# -ge 1 ]
+    then
+	TITLE="$1"
+	shift
+    fi
+
+    if is_interactive 
+    then
+	if [ -n "${TITLE}" ]
+	then
+	    echo "${TITLE}"
+	    echo
+	fi
+	# TODO: Would be nice if this weren't hardwired
+	COLUMNS=4
+	OFFSET=4
+    else
+	COLUMNS=1
+	OFFSET=0
+    fi
+    pr -t -${COLUMNS} -o ${OFFSET} "$@"
+}
+
+
+# Format a manual page
+#
+# Args:
+#  1 - Path to manual page file
+#
+manpage()
+{
+    [ -r "$1" ] || die "$1: File not found"
+
+    case $(uname -s) in
+
+	Darwin|FreeBSD|Linux)
+	    # TODO: This behavior works in FreeBSD but is undocumented.
+	    man "$1"
+	    ;;
+
+
+	*)
+	    die "Don't know how to format manual pages on this platform"
+	    ;;
+    esac
+}

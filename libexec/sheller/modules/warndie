@@ -1,0 +1,78 @@
+#+MODULE
+#
+# warndie - Warnings and ways to die
+#
+
+include exit
+
+
+#+FUNCTION
+# Print a warning to standard error
+#
+# Args:
+#   1+ - Warning text
+warn()
+{
+    # TODO: Does this result in an extra newline if no args?
+    echo "$@" 1>&2
+}
+
+
+#+FUNCTION
+# Print warning text from stdin
+# 
+# Args:
+#   1+ - Message to print ahead of what's on stdin
+warn_stdin()
+{
+    warn "$@"
+    cat 1>&2
+}
+
+
+#+FUNCTION
+# Print a warning and exit with the "something's wrong" code
+#
+# Args:
+#   1+ - Warning text
+die()
+{
+    [ $# -gt 0 ] && warn $@
+    exit_general
+}
+
+
+#+FUNCTION
+# Die with a usage complaint
+#
+# Args:
+#   1+ - Arguments.  Program name automatically prepended.
+die_usage()
+{
+    [ $# -gt 0 ] && warn "Usage: ${basename $0} $@"
+    exit_usage
+}
+
+
+#+FUNCTION
+# Die with an internal error
+#
+# Args:
+#   1+ - Warning text
+die_internal()
+{
+    warn "INTERNAL ERROR: $@"
+    exit_software
+}
+
+
+#+FUNCTION
+# Die with a configuration error
+#
+# Args:
+#   1+ - Warning text
+die_config()
+{
+    warn "Configuration error: $@"
+    exit_config
+}

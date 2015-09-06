@@ -1,0 +1,36 @@
+#+MODULE
+#
+# identity - Program identity
+#
+
+
+#+FUNCTION
+#
+# progname - Determine the name of the program as invoked
+#
+# Usage:
+#   progname
+#
+# Arguments:
+#  (None)
+#
+progname()
+{
+    echo $(basename $0)
+}
+
+
+#+FUNCTION
+#
+# progdir - Determine the directory of the program as an absolute path
+#
+# Usage:
+#   progdir
+#
+# Arguments:
+#  (None)
+#
+progdir()
+{
+    echo $(cd $(dirname $0) && pwd)
+}

@@ -1,0 +1,24 @@
+#+MODULE
+#
+# echo - Enhanced echo with '-n' for systems that adhere to POSIX
+#
+
+
+# Print something to stdout
+#
+# Args:
+#   1+ - Text to print
+# Options:
+#   -n - Suppress trailing newline like some versions of echo(1)
+echo_enhanced()
+{
+    if [ "$1" = "-n" ]
+    then
+	shift
+	(IFS=" " ; printf '%s' "$*")
+    else
+	echo "$*"
+    fi
+}
+
+alias echo=echo_enhanced

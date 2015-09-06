@@ -1,0 +1,23 @@
+#
+# Validation for various kinds of values
+#
+
+
+# Determine if a value is a valid integer
+#
+# Args:
+#  1 - Value under test
+valid_integer()
+{
+    echo "$1" | egrep -qxe '-?[0-9]+'
+}
+
+
+# Determine if a value is a valid positive integer or zero
+#
+# Args:
+#  1 - Value under test
+valid_positive_integer()
+{
+    echo "$1" | egrep -qxe '[0-9]+'
+}

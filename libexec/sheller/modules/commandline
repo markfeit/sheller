@@ -1,0 +1,79 @@
+#
+# Functions related to the command line
+#
+
+include warndie
+include valid
+
+# Properly quote the arguments and print a string with the results
+#
+# Args:
+#  1+ - Words to be quoted
+shellwords()
+{
+    (for WORD ; do echo "${WORD}"; done) \
+        | sed -e "s/'/'\\\\''/g; s/^/'/; s/\$/'/" \
+        | tr "\n" " "
+    echo
+}
+
+
+
+# Return an argument from a list.  Usual invocation is 'argv 3 "$@"'
+#
+# Args:
+#  1  - Argument number, indexed from one
+#  2+ - Arguments
+argv()
+{
+    NUMBER="$1"
+    shift
+    valid_positive_integer "${NUMBER}" \
+	|| die_internal "argv(): Invalid argument '${NUMBER}'"
+    [ "${NUMBER}" -gt 0 -a "${NUMBER}" -le $# ] \
+	|| die_internal "argv(): Argument ${NUMBER} out of range"
+    eval "echo \$${NUMBER}"
+}
+
+
+# Spit out a range of items in arguments properly quoted for use by the shell.
+#
+# Args:
+#   1  - Start (indexed from 1)
+#   2  - End
+#   3+ - Arguments
+#
+# Example:
+#   argv_range 2 3 foo bar baz quux
+# Returns:
+#   'bar' 'baz'
+argv_range()
+{
+    START=$1
+    valid_positive_integer "${START}" \
+        || die_internal "argv_range(): Invalid start argument '${START}'"
+    [ "${START}" -gt 0 -a "${START}" -le $# ] \
+        || die_internal "argv_range(): Start argument ${START} out of range"
+    shift
+
+    END=$1
+    valid_positive_integer "${END}" \
+        || die_internal "argv_range(): Invalid start argument '${END}'"
+    [ "${END}" -gt 0 -a "${END}" -le $# ] \
+        || die_internal "argv_range(): End argument ${END} out of range"
+    shift
+
+    [ "${START}" -le "${END}" ] \
+	|| die_internal "argv_range(): End must be >= start"
+
+
+    RESULT=""
+    SPACE=""
+    while [ "${START}" -le "${END}" ]
+    do
+	RESULT="${RESULT}${SPACE}$(shellwords "$(argv "${START}" "$@")")"
+	START=$((${START} + 1))
+	SPACE=" "
+    done
+    echo "${RESULT}"
+}

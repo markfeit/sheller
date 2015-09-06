@@ -1,0 +1,67 @@
+#
+# Try to do things repeatedly
+#
+
+include time
+include valid
+include warndie
+
+# Run a program repeatedly, waiting for it to exit true (0) or
+# anything other than false (1), waiting one second between attempts.
+#
+# Options:
+#  --invert  Stop when the program exits non-true (non-zero)
+#
+# Args:
+#  1  - Amount of time in seconds
+#  2+ - Command to execute
+
+try_for()
+{
+    # Usually, 0 or any error is cause for stopping
+    NE_RESULT=1
+    if [ "$1" = "--invert" ]
+    then
+	# Invert means any nonzero stops us.
+	NE_RESULT=0
+	shift
+    fi
+
+    [ $# -gt 1 ] || die_internal "try_for(): Bad call '$@'"
+    __TRYFOR_TIME="$1"
+    shift
+    valid_positive_integer "${__TRYFOR_TIME}" \
+	|| die_internal "try_for(): Bad time value '${__TRYFOR_TIME}'"
+
+    __TRYFOR_END=$(($(epoch_time) + ${__TRYFOR_TIME}))
+    while [ "$(epoch_time)" -lt ${__TRYFOR_END} ]
+    do
+	$@ || false
+	__TRYFOR_RESULT=$?
+	[ ${__TRYFOR_RESULT} -ne "${NE_RESULT}" ] && break
+	sleep 1
+    done
+
+    return ${__TRYFOR_RESULT}
+}
+
+# Like try_for() but tries forever.
+#
+# Args:
+#  1+ - Command to execute
+
+try_forever()
+{
+    [ $# -ge 1 ] || die_internal "try_forever(): Bad call '$@'"
+
+    while true
+    do
+	$@ || false
+	__TRYFOREVER_RESULT=$?
+	# 0 or any error is cause for stopping
+	[ ${__TRYFOREVER_RESULT} -ne 1 ] && break
+	sleep 1
+    done
+
+    return ${__TRYFOR_RESULT}
+}

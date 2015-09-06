@@ -1,0 +1,87 @@
+#
+# tmp - Functions for handling temporary files
+#
+
+include onexit
+
+# TODO: Ideally, there should be something that calls mkstemp() or
+# mkdtemp(), but there's no POSIX command-line tool that does this.
+# One alternative might be to check to see if mktemp(1) from the GNU
+# Coreutils is available and use that to divine the answer.  The
+# fallback position is what's below.
+
+# Search for the first commonly-used variable to specify a temporary
+# directory.  Note that TMPDIR is POSIX and is therefore preferred;
+# the others are holdovers from the pre-POSIX days and other systems.
+
+for TEMP_DIR in TMPDIR TMP TEMPDIR TEMP
+do
+    eval "__TMPBASE_CANDIDATE=\$${TEMP_DIR}"
+    if [ -n "${__TMPBASE_CANDIDATE}" \
+	-a -d "${__TMPBASE_CANDIDATE}" \
+	-a -w "${__TMPBASE_CANDIDATE}" ]
+    then
+	__TMPBASE="${__TMPBASE_CANDIDATE}"
+	break
+    fi
+done
+
+__TMPBASE="${__TMPBASE:-/tmp}/${WHOAMI}.$$"
+__TMPBASE_NUMBER=0
+
+# Make sure we have a nonexistant directory
+while [ -e "${__TMPBASE}" ]
+do
+    __TMPBASE="${__TMPBASE_ROOT}.${__TMPBASE_NUMBER}"
+    __TMPBASE_NUMBER=$((${__TMPBASE_NUMBER} + 1))
+done
+
+
+
+
+
+# Generate the path to a named temporary file
+#
+# Args:
+#  1 - Name of file.  Must be a valid file name and not contain slashes
+tempfile()
+{
+    [ $# -eq 1 ] || die_internal "Usage: tempfile filename"
+    echo "$1" | fgrep -q '/' \
+	&& die_internal "tempfile(): Slash in filename '$1'"
+    mkdir -p "${__TMPBASE}"
+    echo "${__TMPBASE}/$1"
+}
+
+
+# Generate the name of a temporary file and create it.  Since the
+# temporary directory is a unique, per-PID directory, just do a one-up
+# count.
+
+__TMPNAM_NUMBER=0
+
+tmpnam()
+{
+    __TMPNAM_RESULT=/
+
+    while [ -e "${__TMPNAM_RESULT}" ]
+    do
+	__TMPNAM_RESULT=$(tempfile "${__TMPNAM_NUMBER}")
+	__TMPNAM_NUMBER=$((${__TMPNAM_NUMBER} + 1))
+    done
+
+    touch "${__TMPNAM_RESULT}" \
+	|| die "Failed to create temporary file '${__TMPNAM_RESULT}'"
+
+    echo "${__TMPNAM_RESULT}"
+}
+
+
+# Onexit will cover running this.
+__tmpbase_cleanup()
+{
+    if [ -n "${__TMPBASE}" ]
+    then
+        rm -rf "${__TMPBASE}"
+    fi
+}

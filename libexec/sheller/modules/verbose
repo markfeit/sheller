@@ -1,0 +1,80 @@
+#
+# verbose - Functions to support verbose output
+#
+
+include warndie
+
+__SHELLER_VERBOSE=false
+
+# Determine whether or not verbose mode is in effect
+is_verbose()
+{
+    [ "${__SHELLER_VERBOSE}" = "true" ]
+}
+
+
+# Set verbose on or off
+#
+# Args:
+#  1 - Setting.  Must be 'true' or 'false'.  Default is 'true'
+set_verbose()
+{
+    case "$1" in
+	true|false)
+	    __SHELLER_VERBOSE="$1"
+	    ;;
+	"")
+	    __SHELLER_VERBOSE=true
+	    ;;
+	*)
+	    die_internal "set_verbose(): Invalid argument '$1'"
+	    ;;
+    esac
+}
+
+
+# Set verbose if stdout is a TTY
+verbose_auto()
+{
+    [ -t 1 ] && set_verbose || true
+}
+
+
+
+# Print something to stdout if verbose mode is enabled.
+#
+# Args:
+#   1+ - Text to print
+# Options:
+#   -n - Suppress trailing newline like some versions of echo(1)
+verbose()
+{
+    if is_verbose
+    then
+	if [ "$1" = "-n" ]
+	then
+	    shift
+	    (IFS=" " ; printf '%s' "$*")
+	else
+	    echo "$*"
+	fi
+    fi
+}
+
+
+# Print the standard input if verbose mode is enaled.
+verbose_stdin()
+{
+    is_verbose && cat
+}
+
+
+# Print a standard "done" message.  Usually used like this:
+#
+#   verbose -n "Taking a short nap... "
+#   sleep 10
+#   verbose_done
+verbose_done()
+{
+    verbose " Done."
+}

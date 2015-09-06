@@ -1,0 +1,31 @@
+#
+# Output - Various output functions
+#
+
+# Print a horizontal line to the standard output
+line()
+{
+    cat <<EOF
+-------------------------------------------------------------------------------
+EOF
+}
+
+
+# Print all lines of input centered for an 80-character line
+center()
+{
+    awk '{ printf "%*s%s\n", int((80-length)/2), "", $0 }'   
+}
+
+
+
+# Print a nicely-formatted section header
+section()
+{
+    echo
+    echo
+    line
+    echo "$@" | tr a-z A-Z | center
+    line
+    echo
+}

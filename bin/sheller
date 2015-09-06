@@ -1,0 +1,24 @@
+#!/bin/sh -e
+#
+# sheller - Print the location of the initialization module for
+# evaluation by a shell.
+#
+# Usage: sheller
+#
+
+WHOAMI=$(basename $0)
+WHEREAMI=$(dirname $0)
+WHEREAMI_REALLY=$(cd ${WHEREAMI} && pwd)
+
+LIBEXEC="${WHEREAMI_REALLY}/../libexec/${WHOAMI}"
+MODULES="${LIBEXEC}/modules"
+
+if [ ! -d "${MODULES}" ]
+then
+    echo "${WHOAMI}: Sheller appears to have been improperly installed" 2>&1
+    exit 1
+fi
+
+echo "${LIBEXEC}/init"
+
+exit 0

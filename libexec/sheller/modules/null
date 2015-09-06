@@ -1,0 +1,19 @@
+#+MODULE
+#
+# null - A module that does absolutely nothing.
+#
+
+#+FUNCTION
+#
+# null - Do absolutely nothing.
+#
+# Usage:
+#   null
+#
+# Arguments:
+#  (None)
+#
+null()
+{
+    true
+}

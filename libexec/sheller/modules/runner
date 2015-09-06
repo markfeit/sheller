@@ -1,0 +1,92 @@
+#
+# Program Runners
+#
+
+include tmp
+include warndie
+
+# Show a nicely-formatted failure
+# Args:
+#  1  - Command that failed
+#  2  - Return value
+#  3+ - Path to error output files.  Print the first one containing anything.
+__show_failure()
+{
+    __FAILED="$1"
+    shift
+    __RETURN="$1"
+    shift
+    warn ""
+    warn "Command ${__FAILED} failed with a return value of ${__RETURN}."
+    while [ $# -gt 0 ]
+    do
+	__OUTFILE="$1"
+	shift
+	if [ -s "${__OUTFILE}" ]
+	then
+	    warn
+	    warn "Output:"
+	    sed -e 's/^/    /g' "${__OUTFILE}" | warn_stdin
+	    break
+	fi
+    done
+}
+
+
+# Execute something quietly, discarding stdout and stderr if it
+# succeeds.
+#
+# Options:
+#  --lt n    Consider any exit code less than n sucessful.
+#
+# Args:
+#  1+ - Command and args
+quietly()
+{
+    if [ $1 = "--lt" ]
+    then
+	shift
+	__MINRESULT=$1
+	shift
+    else
+	__MINRESULT=1
+    fi
+    __RESULT=0
+    __OUTPUT=$(tmpnam)
+    "$@" > ${__OUTPUT} 2>&1 || __RESULT=$?
+    [ "${__RESULT}" -lt "${__MINRESULT}" ] \
+	|| __show_failure "$*" "${__RESULT}" ${__OUTPUT}
+
+    rm -f ${__OUTPUT}
+    return ${__RESULT}
+}
+
+
+# Like quietly(), but keep stdout if successful.
+#
+# Args:
+#  1+ - Command and args
+adroitly()
+{
+    __RESULT=0
+    __OUTPUT=$(tmpnam)
+    __ERROR=$(tmpnam)
+    "$@" > "${__OUTPUT}" 2> "${__ERROR}" \
+	|| __RESULT=$?
+    [ "${__RESULT}" -eq 0 ] \
+	|| __show_failure "$*" "${__RESULT}" "${__ERROR}" "${__OUTPUT}"
+
+    cat ${__OUTPUT}
+    rm -f ${__OUTPUT} ${__ERROR}
+    return ${__RESULT}
+}
+
+
+# Run something but discard all output and return the exit code
+silently()
+{
+    __RESULT=0
+    __OUTPUT=$(tmpnam)
+    "$@" > /dev/null 2>&1 || __RESULT=$?
+    return ${__RESULT}
+}

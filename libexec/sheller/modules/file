@@ -1,0 +1,16 @@
+#
+# Functions for doing things with files
+#
+
+# Determine if a file is an iso9660 image without using file(1)
+#
+# Args:
+#  1 - Path to file
+
+file_is_iso9660()
+{
+    [ -r "$1" ] \
+	&& __ISO9660MAGIC=$(dd "if=$1" bs=1 skip=32769 count=5 2>/dev/null) \
+	&& [ "${__ISO9660MAGIC}" = "CD001" ] \
+	|| false    
+}

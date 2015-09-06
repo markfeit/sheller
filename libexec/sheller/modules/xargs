@@ -1,0 +1,24 @@
+#
+# Emulate versions of xargs that support the -r flag
+#
+
+include tmp
+
+# Emulate xargs -r (do nothing if no input lines), which isn't POSIX
+#
+# Args:
+#  1+ - Any valid arguments for xargs(1)
+xargs_r()
+{
+    # TODO: This would work better with arbitrarily-large input if we
+    # tried to read the first line and then passed that plus a cat of
+    # stdin to xargs.
+
+    __XARGS_R_FILE=$(tmpnam)
+    cat > "${__XARGS_R_FILE}"
+    if [ -s "${__XARGS_R_FILE}" ]
+    then
+	xargs "$@" < "${__XARGS_R_FILE}"
+    fi
+    rm -f "${__XARGS_R_FILE}"
+}

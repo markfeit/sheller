@@ -1,0 +1,13 @@
+#
+# Program search path functions
+#
+
+# Determine if a program can be found in the search path
+#
+# Args:
+#  1 - Program name
+in_path()
+{
+    [ $# -eq 1 ] || die_internal "in_path(): Wrong number of arguments"
+    which "$1" > /dev/null 2>&1
+}

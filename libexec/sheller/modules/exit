@@ -1,0 +1,68 @@
+#+MODULE
+#
+# exit - Functions to exit the program using various standard codes
+#
+
+#+FUNCTION
+#
+# exit_* - Exit using one of the 
+#
+# Usage:
+#   exit_*
+#
+#   Where * is one of the following:
+#
+#     These are based on values defined <sysexits.h> on most systems:
+#     
+#     ok           successful termination
+#     usage        command line usage error
+#     dataerr      data format error
+#     noinput      cannot open input
+#     nouser       addressee unknown
+#     nohost       host name unknown
+#     unavailable  service unavailable
+#     software     internal software error
+#     oserr        system error
+#     osfile       critical os file missing
+#     cantcreat    Unable to create (user) output file
+#     ioerr        input/output error
+#     tempfail     temp failure; user is invited to retry
+#     protocol     remote error in protocol
+#     noperm       permission denied
+#     config       configuration error
+#     
+#     These are nonstandard but included for completeness:
+#     
+#     true        Success
+#     false       Failure, not found, etc.
+#     general     Other errors not covered above
+#     
+#
+# Arguments:
+#  (None)
+#
+
+# Exit codes are based on values defined <sysexits.h> on most systems.
+
+exit_ok()          { exit 0;  }  # successful termination
+exit_usage()       { exit 64; }  # command line usage error
+exit_dataerr()     { exit 65; }  # data format error
+exit_noinput()     { exit 66; }  # cannot open input
+exit_nouser()      { exit 67; }  # addressee unknown
+exit_nohost()      { exit 68; }  # host name unknown
+exit_unavailable() { exit 69; }  # service unavailable
+exit_software()    { exit 70; }  # internal software error
+exit_oserr()       { exit 71; }  # system error
+exit_osfile()      { exit 72; }  # critical os file missing
+exit_cantcreat()   { exit 73; }  # Unable to create (user) output file
+exit_ioerr()       { exit 74; }  # input/output error
+exit_tempfail()    { exit 75; }  # temp failure; user is invited to retry
+exit_protocol()    { exit 76; }  # remote error in protocol
+exit_noperm()      { exit 77; }  # permission denied
+exit_config()      { exit 78; }  # configuration error
+
+# These are not in sysexits.h but are added for completeness.
+
+exit_true()        { exit_ok; } # Success
+exit_false()       { exit 1;  } # Failure, not found, etc.
+exit_general()     { exit 2;  } # Other errors not covered above

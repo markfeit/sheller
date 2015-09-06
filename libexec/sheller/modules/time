@@ -1,0 +1,11 @@
+#
+# Time-Related Functions
+#
+
+# Determine epoch time
+epoch_time()
+{
+    # This is horrible, but POSIX dictates that it work.
+    # Don't be tempted to use date +%s, which is GNU extension.
+    PATH=$(getconf PATH) awk 'BEGIN{srand();print srand()}'
+}

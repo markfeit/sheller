@@ -1,0 +1,50 @@
+#
+# onexit - Do things when the script exits
+#
+
+
+include shellwords
+include tmp
+include warndie
+
+# Don't use tmpnam() for this because it hoses up things that do execs.
+__ONEXIT_SCRIPT="${__TMPBASE}.onexit"
+
+__onexit()
+{
+    if [ -r "${__ONEXIT_SCRIPT}" ]
+    then
+        . "${__ONEXIT_SCRIPT}"
+	rm -f "${__ONEXIT_SCRIPT}"
+    fi
+
+    # This is done as a favor to the temporary file functions above
+    # since there's a chicken-and-egg problem w/r/t $__TMPBASE
+    __tmpbase_cleanup
+
+}
+trap __onexit EXIT
+
+
+# TODO: Make a trap alternative that only snags 'EXIT'
+alias trap="die_internal Do not use trap -- Called trap "
+
+# Add a command to the list of things to do when the script exits
+#
+# Args:
+#  1+ - Command and arguments
+#
+# Note that all arguments provided will be single quoted, making it
+# impossible to evaluate environment variables when the command
+# runs.  It is better to create and call a function, like this:
+#
+#     end_stuff()
+#     {
+#         rm -f ${THING_TO_REMOVE}
+#     }
+#     onexit end_stuff
+#
+onexit()
+{
+    shellwords "$@" >> "${__ONEXIT_SCRIPT}"
+}

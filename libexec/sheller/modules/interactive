@@ -1,0 +1,28 @@
+#
+# Functions related to interactivity
+#
+
+# Determine if the current script is being run interactively (i.e.,
+# all input and output is to a terminal)
+if [ -t 0 -a -t 1 -a -t 2 ]
+then
+    # TODO: Try this as an alias instead of a function
+    is_interactive()
+    {
+	true
+    }
+else
+    is_interactive()
+    {
+	false
+    }
+fi
+    
+
+
+# Die if the current script is not being run interactively
+require_interactive()
+{
+    is_interactive || die "This program must be run interactively."
+}
+

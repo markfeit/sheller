@@ -1,0 +1,10 @@
+		    Known To-Do Items for Sheller
+
+
+Convert all documentation to POD.  The shell can handle it in-line by
+using the null command:
+
+      : <<=cut
+      This is a bunch of documentation.
+      =cut
+

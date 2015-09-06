@@ -1,0 +1,44 @@
+#
+# Sheller Initialization
+#
+
+__SHELLER_MODULES="__PREFIX__/libexec/sheller/modules"
+
+if [ ! -d "${__SHELLER_MODULES}" ]
+then
+    echo "Sheller appears to have been improperly installed" 2>&1
+    exit 1
+fi
+
+__SHELLER_INCLUDED=""
+
+include()
+{
+    for ARG in "$@"
+    do
+    	# TODO: Barf on anything that looks like a path
+	if echo "${ARG}" | fgrep '/'
+	then
+	    echo "include: Invalid module ${ARG}" 1>&2
+	    exit 2
+	fi
+	
+	# This prevents the same module from being included twice.
+    
+	if ! echo "${__SHELLER_INCLUDED}" \
+	    | sed -e 's/^://; s/:/\n/g' \
+	    | fgrep -qx "${ARG}"
+	then
+	    if [ ! -r "${__SHELLER_MODULES}/${ARG}" ]
+	    then
+		echo "include: Module ${ARG} not found" 1>&2
+		exit 2
+	    fi
+
+	    # This is done _first_ to prevent recursive includes.
+	    __SHELLER_INCLUDED="${__SHELLER_INCLUDED}:${ARG}"
+    	    . "${__SHELLER_MODULES}/${ARG}"
+	fi
+
+    done
+}
