@@ -41,7 +41,7 @@ To incorporate ShellER into a script, add the following to the
 beginning:
 
 ````
-. $(sheller-init)
+. $(sheller)
 ````
 
 ShellER groups its available functions into modules which can be

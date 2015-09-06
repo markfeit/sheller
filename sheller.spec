@@ -13,7 +13,11 @@ License: Apache License
 URL: https://github.com/markfeit/sheller
 BuildRoot: %{_topdir}/%{name}-%{version}-root
 
-Source: 
+# TODO: Need to get things in place to pull this and name it
+# properly. The tarball that comes out needs to have a version number
+# (e.g., sheller-1.0.tar.gz).
+#
+# Source: https://github.com/markfeit/sheller/archive/master.tar.gz
 
 %description
 ShellER provides a set of extended functions for the Bourne shell in
