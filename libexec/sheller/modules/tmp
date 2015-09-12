@@ -78,6 +78,19 @@ tmpnam()
 }
 
 
+
+# Like tmpnam() but creates a directory instead
+tmpdir()
+{
+    __TMPDIR_NAME="$(tmpnam)"
+    rm -f "${__TMPDIR_NAME}" \
+	&& mkdir -p "${__TMPDIR_NAME}" \
+	|| die "Failed to create temporary directory '${__TMPDIR_NAME}'"
+
+    echo "${__TMPDIR_NAME}"
+}
+
+
 # Onexit will cover running this.
 __tmpbase_cleanup()
 {
