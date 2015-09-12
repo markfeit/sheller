@@ -2,6 +2,7 @@
 # tmp - Functions for handling temporary files
 #
 
+include identity
 include onexit
 
 # TODO: Ideally, there should be something that calls mkstemp() or
@@ -26,7 +27,7 @@ do
     fi
 done
 
-__TMPBASE="${__TMPBASE:-/tmp}/${WHOAMI}.$$"
+__TMPBASE="${__TMPBASE:-/tmp}/$(progname).$$"
 __TMPBASE_NUMBER=0
 
 # Make sure we have a nonexistant directory
