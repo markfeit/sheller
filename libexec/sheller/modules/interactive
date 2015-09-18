@@ -2,6 +2,8 @@
 # Functions related to interactivity
 #
 
+include warndie
+
 # Determine if the current script is being run interactively (i.e.,
 # all input and output is to a terminal)
 if [ -t 0 -a -t 1 -a -t 2 ]
