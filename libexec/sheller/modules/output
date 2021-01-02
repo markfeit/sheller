@@ -29,3 +29,11 @@ section()
     line
     echo
 }
+
+
+
+# Cat to standard out only if it is a TTY
+stdout_tty()
+{
+    [ -t 1 ] && cat || cat > /dev/null
+}
